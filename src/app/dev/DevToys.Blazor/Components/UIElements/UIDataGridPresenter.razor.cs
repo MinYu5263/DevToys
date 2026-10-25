@@ -50,6 +50,14 @@ public partial class UIDataGridPresenter : StyledComponentBase, IDisposable
         GC.SuppressFinalize(this);
     }
 
+    private async Task OnRowClickAsync(IUIDataGridRow? row)
+    {
+        if (UIDataGrid.OnRowClickAction is not null)
+        {
+            await UIDataGrid.OnRowClickAction.Invoke(row);
+        }
+    }
+
     private void UIDataGrid_SelectedRowChanged(object? sender, EventArgs e)
     {
         if (UIDataGrid.Rows is not null && UIDataGrid.SelectedRow is not null && UIDataGrid.CanSelectRow)

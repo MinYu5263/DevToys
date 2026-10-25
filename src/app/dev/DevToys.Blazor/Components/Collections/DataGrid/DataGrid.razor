@@ -72,7 +72,7 @@
             Guard.IsNotNull(Rows);
             bool isOdd = Rows.IndexOf(row) % 2 == 1;
             <tr class="@($"{(isOdd ? "odd" : string.Empty)} {(object.ReferenceEquals(row, SelectedRow) ? "selected" : string.Empty)}")"
-                @onclick="@(() => OnRowClick(row))">
+                @onclick="@(() => OnRowClickAsync(row))">
                 @if (row is not null)
                 {
                     var columnCount = 0;

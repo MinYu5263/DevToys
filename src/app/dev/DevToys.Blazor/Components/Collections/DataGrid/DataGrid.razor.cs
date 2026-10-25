@@ -45,6 +45,9 @@ public partial class DataGrid<TRow, TCell, TRowDetail> : JSStyledComponentBase, 
     public EventCallback<TRow> SelectedRowChanged { get; set; }
 
     [Parameter]
+    public EventCallback<TRow?> RowClicked { get; set; }
+
+    [Parameter]
     public bool CanSelectRow { get; set; } = true;
 
     [Parameter]
@@ -271,6 +274,13 @@ public partial class DataGrid<TRow, TCell, TRowDetail> : JSStyledComponentBase, 
     protected void OnRowClick(object? selectedRow)
     {
         SetSelectedRow(selectedRow as TRow, raiseEvent: true);
+    }
+
+    private Task OnRowClickAsync(object? selectedRow)
+    {
+        // Preserve selection handling before notifying row-click subscribers
+        OnRowClick(selectedRow);
+        return RowClicked.InvokeAsync(selectedRow as TRow);
     }
 
     protected void OnKeyDown(KeyboardEventArgs ev)

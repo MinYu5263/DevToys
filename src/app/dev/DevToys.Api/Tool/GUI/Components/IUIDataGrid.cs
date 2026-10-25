@@ -33,6 +33,14 @@ public interface IUIDataGrid : IUITitledElementWithChildren
     Func<IUIDataGridRow?, ValueTask>? OnRowSelectedAction { get; }
 
     /// <summary>
+    /// Gets the action to run when the user clicks a row, including an already selected row
+    /// </summary>
+    /// <remarks>
+    /// The callback receives the clicked row, which may differ from <see cref="SelectedRow"/>
+    /// </remarks>
+    Func<IUIDataGridRow?, ValueTask>? OnRowClickAction { get; }
+
+    /// <summary>
     /// Gets whether the element can be expanded to take the size of the whole tool boundaries. Default is false.
     /// </summary>
     /// <remarks>
@@ -131,6 +139,8 @@ internal sealed class UIDataGrid : UITitledElementWithChildren, IUIDataGrid, IDi
     }
 
     public Func<IUIDataGridRow?, ValueTask>? OnRowSelectedAction { get; internal set; }
+
+    public Func<IUIDataGridRow?, ValueTask>? OnRowClickAction { get; internal set; }
 
     public event EventHandler? CanSelectRowChanged;
     public event EventHandler? SelectedRowChanged;
@@ -233,6 +243,35 @@ public static partial class GUI
             = (value) =>
             {
                 onRowSelectedAction?.Invoke(value);
+                return ValueTask.CompletedTask;
+            };
+        return element;
+    }
+
+    /// <summary>
+    /// Sets the action to run when clicking a row, including an already selected row
+    /// </summary>
+    /// <remarks>
+    /// Programmatic selection and keyboard navigation do not invoke this callback
+    /// </remarks>
+    public static IUIDataGrid OnRowClick(this IUIDataGrid element, Func<IUIDataGridRow?, ValueTask>? onRowClickAction)
+    {
+        ((UIDataGrid)element).OnRowClickAction = onRowClickAction;
+        return element;
+    }
+
+    /// <summary>
+    /// Sets the action to run when clicking a row, including an already selected row
+    /// </summary>
+    /// <remarks>
+    /// Programmatic selection and keyboard navigation do not invoke this callback
+    /// </remarks>
+    public static IUIDataGrid OnRowClick(this IUIDataGrid element, Action<IUIDataGridRow?>? onRowClickAction)
+    {
+        ((UIDataGrid)element).OnRowClickAction
+            = (value) =>
+            {
+                onRowClickAction?.Invoke(value);
                 return ValueTask.CompletedTask;
             };
         return element;
